@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+   <!-- Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+            border: 1px solid #000; /* Add border to the page */
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse; /* Collapse borders for the table */
+            border: 1px solid #000; /* Add border to the table */
+        }
+
+        th, td {
+            border: 1px solid #000; /* Add border to cells */
+            padding: 8px; /* Add padding to cells for better readability */
+            border-top: 1px solid #000; /* Add top border to cells */
+            border-bottom: 1px solid #000; /* Add bottom border to cells */
+        }
+
+        th {
+            background-color: #f5f5f5; /* Light gray background for header cells */
+            border: 1px solid #000;
+        }
+
+        .page-border {
+            border: 2px solid #000; /* Page border for printing */
+        }
+
+        .tabular-column {
+            background-color: #f5f5f5; /* Light background color for certain details */
+            border: 1px solid #000;
+        }
+
+        @media print {
+            body {
+                border: 1px solid #000; /* Add border to the page when printing */
+            }
+
+            table {
+                border: 1px solid #000; /* Add border to the table when printing */
+            }
+
+            th, td {
+                border: 1px solid #000; /* Add border to cells when printing */
+            }
+
+            .page-border {
+                border: 2px solid #000; /* Page border for printing */
+            }
+
+            .tabular-column {
+                background-color: #f5f5f5; /* Light background color for certain details when printing */
+            }
+        }
+    </style>5
+
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="container mb-5 mt-3">
+                <div class="row d-flex align-items-baseline">
+                    <div class="col-xl-9">
+                        <td><input type="text" class="form-control" id="invoiceId" name="invoiceId"
+                                placeholder="Generated Invoice ID" readonly></td>
+                    </div>
+                    <div class="col-xl-3 float-end">
+
+                    </div>
+                    <hr>
+                </div>
+
+                <div class="container">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <i class="fab fa-mdb fa-4x ms-0" style="color:#5d9fc5 ;"></i>
+                            <h1 class="pt-0">{{ company_name }}</h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-8">
+                            <ul class="list-unstyled">
+                                <li class="text-muted">To: <span style="color:#5d9fc5 ;">{{customer_name}}</span></li>
+                                <li class="text-muted">{{ customer_id }}</li>
+                                <li class="text-muted">{{ customer_address }}</li>
+                                <li class="text-muted"><i class="fas fa-phone"></i> {{ customer_mobile }}</li>
+                            </ul>
+                            <ul class="list-unstyled">
+                                <li class="text-muted">From: <span style="color:#5d9fc5 ;">{{from_name}}</span></li>
+                                <li class="text-muted">{{ from_id }}</li>
+                                <li class="text-muted">{{ from_address }}</li>
+                                <li class="text-muted"><i class="fas fa-phone"></i> {{ from_mobile }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-xl-4">
+                            <p class="text-muted">Invoice</p>
+                            <ul class="list-unstyled">
+                                <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i> <span
+                                        class="fw-bold">ID:</span>
+
+                                </li>
+                                <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i> <span
+                                        class="fw-bold">Date: </span> {{ bill_date }}</li>
+
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row my-2 mx-1 justify-content-center">
+                        <table class="table table-striped table-borderless">
+                            <thead style="background-color:#84B0CA ;" class="text-white">
+                                <tr>
+                                    <th scope="col">Sno</th>
+                                    <th scope="col">Item Code</th>
+                                    <th scope="col">Item Name</th>
+                                    <th scope="col">Qty</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">GST</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tbody id="itemTableBody">
+
+                                    {% for item in items_data %}
+                                    <tr>
+                                        {% if item['item_code'] %}
+                                        <td>{{ loop.index0 + 1 }}</td>
+                                        {% endif %}
+                                        <td>{{ item['item_code'] }}</td>
+                                        <td>{{ item['item_name'] }}</td>
+                                        <td>{{ item['qty'] }}</td>
+                                        <td>{{ item['price'] }}</td>
+                                        <td>{{ item['gst'] }}</td>
+                                        <td>{{ item['total'] }}</td>
+                                    </tr>
+                                    {% endfor %}
+
+
+
+                                    <tr>
+                                        <td align="right" colspan="6">Sub Total</td>
+                                        <td>{{ subtotal }}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td align="right" colspan="6">Tax amount </td>
+                                        <td>{{ totalgst }}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td align="right" colspan="6">Grand Total </td>
+                                        <td>{{ grandTotal }}</td>
+
+                                    </tr>
+
+                                </tbody>
+
+                        </table>
+                    </div>
+
+                    <p>Thank you for your purchase</p>
+                </div>
+                <div class="col-xl-2">
+                    <button class="btn btn-primary mt-3" onclick="printInvoice()">Print</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</body>
+<script>
+    function printInvoice() {
+        window.print();
+    }
+</script>
+
+<script>
+    function printInvoice() {
+        // Ask the user if they want to print
+        var printOption = window.confirm("Do you want to print this invoice?");
+
+        if (printOption) {
+            // Use the browser's print functionality
+            window.print();
+        }
+    }
+</script>
+<script>
+    function generateInvoiceId() {
+        // Define a prefix for the invoice ID (you can customize this)
+        var prefix = "INV";
+
+        // Get the current date and time
+        var currentDate = new Date();
+
+        // Create a unique identifier (you can use a library or a function for this)
+        var uniqueId = Math.floor(Math.random() * 10000);
+
+        // Format the date and time components
+        var year = currentDate.getFullYear();
+        var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+        var day = ('0' + currentDate.getDate()).slice(-2);
+
+        // Combine components to create the invoice ID
+        var invoiceId = prefix + '/' + year + '-' + month + '-' + day + '-' + uniqueId;
+
+        // Set the generated ID to the corresponding input field
+        document.getElementById('invoiceId').value = invoiceId;
+    }
+
+    // Call the function to generate the invoice ID when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        generateInvoiceId();
+    });
+</script>
+
+</html>
